@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+  <meta charset="UTF-8">
+  <script src="./morefun.js"></script>
+  <script src="./jquery.js"></script>
+  <style>
+    body{
+      background: #eee;
+    }
+    .stage{
+      height: 400px;
+      width: 400px;
+      background: #000;
+      position: relative;
+      perspective: 3000px;
+      perspective-origin: 1200px -1000px;
+      float: left;
+    }
+    .content{
+      width: 400px;
+      height: 400px;
+      background: #aaa;
+      float: left;
+    }
+    .content ol{
+      background: #bbb;
+      overflow: auto;
+      max-height: 350px;
+    }
+    .container{
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform-style: preserve-3d;
+      transition: transform 1s;
+    }
+    .face{
+    	width:150px;
+    	height:150px;
+      background: #fff;
+      margin-top: -75px;
+      margin-left: -75px;
+      position: absolute;
+    }
+  	table{
+  		width:100%;
+  		height:100%;
+  		background: #eee;
+  	}
+    table tr td{
+      width: 33%;
+      transition: background 1s;
+      box-shadow: inset 0 0 35px 5px rgba(0, 0, 0, 0.25), inset 0 2px 1px 1px rgba(255, 255, 255, 0.9), inset 0 -2px 1px 0 rgba(0, 0, 0, 0.25);
+      border-radius: 5px;
+    }
+    .face_u{
+      transform: rotateX(90deg) translateZ(75px);
+    }
+    .face_d{
+      transform: rotateX(-90deg) translateZ(75px);
+    }
+    .face_l{
+      transform: rotateY(-90deg) translateZ(75px);
+    }
+    .face_f{
+      transform: rotateY(0deg) translateZ(75px);
+    }
+    .face_r{
+      transform: rotateY(90deg) translateZ(75px);
+    }
+    .face_b{
+      transform: rotateY(180deg) translateZ(75px);
+    }
+  </style>
+  <title>morefun1.0</title>
+</head>
+<body>
+  <div id="xxx" class="stage">
+    <div class="container">
+      <div class="face face_u">
+        <table>
+          <tr>
+            <td class="ubl"></td><td class="ub"></td><td class="urb"></td>
+          </tr><tr>
+            <td class="ul"></td><td class="u"></td><td class="ur"></td>
+          </tr><tr>
+            <td class="ulf"></td><td class="uf"></td><td class="ufr"></td>
+          </tr>
+        </table>
+      </div>
+      <div class="face face_d">
+        <table>
+          <tr>
+            <td class="dlf"></td><td class="df"></td><td class="dfr"></td>
+          </tr><tr>
+            <td class="dl"></td><td class="d"></td><td class="dr"></td>
+          </tr><tr>
+            <td class="dbl"></td><td class="db"></td><td class="drb"></td>
+          </tr>
+        </table>
+      </div>
+      <div class="face face_l">
+        <table>
+          <tr>
+            <td class="ubl"></td><td class="ul"></td><td class="ulf"></td>
+          </tr><tr>
+            <td class="bl"></td><td class="l"></td><td class="lf"></td>
+          </tr><tr>
+            <td class="dbl"></td><td class="dl"></td><td class="dlf"></td>
+          </tr>
+        </table>
+      </div>
+      <div class="face face_f">
+        <table>
+          <tr>
+            <td class="ulf"></td><td class="uf"></td><td class="ufr"></td>
+          </tr><tr>
+            <td class="lf"></td><td class="f"></td><td class="fr"></td>
+          </tr><tr>
+            <td class="dlf"></td><td class="df"></td><td class="dfr"></td>
+          </tr>
+        </table>
+      </div>
+      <div class="face face_r">
+        <table>
+          <tr>
+            <td class="ufr"></td><td class="ur"></td><td class="urb"></td>
+          </tr><tr>
+            <td class="fr"></td><td class="r"></td><td class="rb"></td>
+          </tr><tr>
+            <td class="dfr"></td><td class="dr"></td><td class="drb"></td>
+          </tr>
+        </table>
+      </div>
+      <div class="face face_b">
+        <table>
+          <tr>
+            <td class="urb"></td><td class="ub"></td><td class="ubl"></td>
+          </tr><tr>
+            <td class="rb"></td><td class="b"></td><td class="bl"></td>
+          </tr><tr>
+            <td class="drb"></td><td class="db"></td><td class="dbl"></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <input type="text" id="ex" placeholder="请输入公式">
+    <input type="button" value="执行" onclick="exe(ex.value)">
+    <input type="button" value="随机" onclick="mad()">
+    <input type="button" value="hide" onclick="$('#xxx').toggle()">
+    <br>
+    <ol id="history">
+      
+    </ol>
+  </div>
+  
+<script>
+
+  var rotate = {x:0,y:0};
+
+  $(function(){
+    run();
+    // morefun.mad();
+    // morefun.cross_1();
+    $(document).keydown(function(event) {
+      var e = event || window.event || arguments.callee.caller.arguments[0];
+      if(e){
+        if (e.keyCode == 37) {   //← / a  
+          rotate.x = 0;
+          $('.container').css('transform','rotateX(0deg)');
+          $('.container').css('transform','rotateY(' + 90 * --rotate.y + 'deg)');
+        }else if(e.keyCode == 38){   //↑ / w
+          rotate.y = 0;
+          $('.container').css('transform','rotateY(0deg)');
+          $('.container').css('transform','rotateX(' + 90 * ++rotate.x + 'deg)');
+        }else if(e.keyCode == 39){   //→ / d
+          rotate.x = 0;
+          $('.container').css('transform','rotateX(0deg)');
+          $('.container').css('transform','rotateY(' + 90 * ++rotate.y + 'deg)');
+        }else if(e.keyCode == 40){   //↓ / s
+          rotate.y = 0;
+          $('.container').css('transform','rotateY(0deg)');
+          $('.container').css('transform','rotateX(' + 90 * --rotate.x + 'deg)');
+        }else if(e.keyCode == 85){
+          exe('u');
+        }else if(e.keyCode == 68){
+          exe('d');
+        }else if(e.keyCode == 76){
+          exe('l');
+        }else if(e.keyCode == 70){
+          exe('f');
+        }else if(e.keyCode == 82){
+          exe('r');
+        }else if(e.keyCode == 66){
+          exe('b');
+        }
+      }
+    });
+  });
+
+  var ob = {
+    u:[['y','y','y'],['y','y','y'],['y','y','y']],
+    d:[['w','w','w'],['w','w','w'],['w','w','w']],
+    l:[['o','o','o'],['o','o','o'],['o','o','o']],
+    f:[['b','b','b'],['b','b','b'],['b','b','b']],
+    r:[['r','r','r'],['r','r','r'],['r','r','r']],
+    b:[['g','g','g'],['g','g','g'],['g','g','g']]
+  };
+
+  function run(){
+
+    morefun.scan(ob);
+
+    var mad_exp = morefun.mad();
+
+    refresh();
+
+    var step_exp = morefun.reduce(morefun.step());
+    
+    refresh();
+
+    console.log({mad:mad_exp,exp:step_exp});
+    console.log(step_exp.length);
+
+  }
+
+  function exe(exp){
+    if(exp != ''){
+      var str = '<li>exe&nbsp;&gt;&gt;&nbsp;'+exp+'</li>';
+      $('#history').append(str);
+      morefun.exe(exp);
+      refresh();
+    }
+  }
+  function mad(){
+    var str = '<li>exe&nbsp;&gt;&gt;&nbsp;'+morefun.mad()+'</li>';
+    $('#history').append(str);
+    refresh();
+  }
+
+  function refresh(){
+    mc = morefun.out();
+    for(k in mc){
+      $('.face_u .'+k).css('background',morefun.c[mc[k][0]]);
+      $('.face_d .'+k).css('background',morefun.c[mc[k][0]]);
+      $('.face_l .'+k).css('background',morefun.c[mc[k][k.indexOf('l')]]);
+      $('.face_f .'+k).css('background',morefun.c[mc[k][k.indexOf('f')]]);
+      $('.face_r .'+k).css('background',morefun.c[mc[k][k.indexOf('r')]]);
+      $('.face_b .'+k).css('background',morefun.c[mc[k][k.indexOf('b')]]);
+    }
+  }
+
+</script>
+</body>
+</html>
